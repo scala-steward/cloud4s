@@ -12,7 +12,7 @@ import scala.sys.process.*
 object DockerApp extends CommandIOApp(
   name = "cloud",
   header = "Mobile Mind Cloud Tool",
-  version = "0.0.1"
+  version = "0.0.2"
 ) {
 
   override def main: Opts[IO[ExitCode]] =

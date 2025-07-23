@@ -5,7 +5,7 @@ import java.io.File
 import scala.language.postfixOps
 import scala.sys.process.*
 
-val scala3Version = "3.6.4"
+val scala3Version = "3.7.1"
 
 lazy val nativeCompile = inputKey[Unit]("Create native image")
 lazy val nativeConfig = inputKey[Unit]("Create configs to native image")
@@ -23,10 +23,10 @@ lazy val root = project
     libraryDependencies ++= Seq(
       ///"ch.qos.logback" % "logback-classic" % "1.5.3",
       "com.jcraft" % "jsch" % "0.1.55",
-      "org.typelevel" %% "cats-effect" % "3.6.1",
+      "org.typelevel" %% "cats-effect" % "3.6.2",
       "com.monovore" %% "decline" % "2.5.0",
       "com.monovore" %% "decline-effect" % "2.5.0",
-      "org.scalameta" %% "munit" % "1.0.0" % Test
+      "org.scalameta" %% "munit" % "1.1.1" % Test
     ),
 
     nativeConfig := {
