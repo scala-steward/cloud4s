@@ -26,7 +26,7 @@ lazy val root = project
       "org.typelevel" %% "cats-effect" % "3.6.2",
       "com.monovore" %% "decline" % "2.5.0",
       "com.monovore" %% "decline-effect" % "2.5.0",
-      "org.scalameta" %% "munit" % "1.1.1" % Test
+      "org.scalameta" %% "munit" % "1.1.2" % Test
     ),
 
     nativeConfig := {
