@@ -32,6 +32,7 @@ object DockerApp extends CommandIOApp(
           case cb: CodeBuildStart => codebuild.start(cb)
           case cb: CodeBuildStop => codebuild.stop(cb)
           case cb: CodeBuildStatus => codebuild.status(cb)
+          case cb: CodeBuildLogs => codebuild.logs(cb)
           case cb: CodeBuildInfo => codebuild.info(cb)
           case cb: CodeBuildProjects => codebuild.projects(cb)
           case StackDeploy(_) => docker.runOnMainHost(cmd)
@@ -67,6 +68,15 @@ def sayError(s: String): IO[ExitCode] =
 
 def sayOk(s: String): IO[ExitCode] =
   say(s) *> IO.unit.as(ExitCode.Success)
+
+def showLogs(out: String): IO[ExitCode] =
+  IO.blocking {
+    Console.print(Console.BLUE)
+    Console.print(s"\n:: cloud ::> \n\nLOGS\n\n")
+    Console.print(out)
+    Console.print("\n\n")
+    Console.print(Console.RESET)
+  } *> IO.unit.as(ExitCode.Success)
 
 object codebuild:
 
@@ -113,6 +123,44 @@ object codebuild:
               (cmd #| filterCmd) !!
             .flatMap:
               r => sayOk(s"build status: ${if r == "null" || r.isEmpty then "BUILDING" else r}")
+
+  private def getLogInfo(bid: String): IO[Either[String, (String, String)]] =
+      IO.blocking:
+
+        val cmd = CodeBuildStatus("").cmd.replace("__build_id__", bid)
+        val filterCmd = "jq '.builds[0].logs.groupName,.builds[0].logs.streamName'"
+        ((cmd #| filterCmd) !!)
+      .map:
+        r =>
+          if r == "null"
+          then Left("cannot get logs")
+          else {
+            r.split("\n").toList match
+              case first :: second :: Nil => Right((first, second))
+              case _ => Left("cannot parse log name")
+          }
+
+  def logs(cb: CodeBuildLogs): IOResult =
+    getBuildId(CodeBuildShowBuildId(cb.projectName))
+        .flatMap:
+          bid =>
+            if bid.isEmpty
+            then sayOk(s"build not found to project ${cb.projectName}")
+            else
+              getLogInfo(bid)
+                .flatMap {
+                  case Left(msg) => sayOk(msg)
+                  case Right((groupName, streamName)) =>
+                    IO.blocking {
+                      val cmd = cb.cmd
+                        .replace("__group_name__", groupName)
+                        .replace("__stream_name__", streamName)
+                      val filterCmd = "jq -r '.events[].message'"
+                      ((cmd #| filterCmd) !!)
+                    }.map(_.split("\n").toList.filter(_.trim().nonEmpty).mkString("\n"))
+                      .flatMap(showLogs)
+                }
+
 
   def info(cb: CodeBuildInfo): IOResult =
     getBuildId(CodeBuildShowBuildId(cb.projectName))

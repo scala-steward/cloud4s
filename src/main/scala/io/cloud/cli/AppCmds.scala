@@ -1,8 +1,6 @@
 package io.cloud.cli
 
 import com.monovore.decline.Opts
-import com.monovore.decline.effect.*
-import cats.effect.*
 import cats.implicits.*
 
 object AppCmds:
@@ -64,6 +62,8 @@ object AppCmds:
     override def cmd = s"aws codebuild batch-get-builds --ids __build_id__"
   case class CodeBuildStatus(projectName: String) extends CodeBuild:
     override def cmd =  s"aws codebuild batch-get-builds --ids __build_id__"
+  case class CodeBuildLogs(projectName: String) extends CodeBuild:
+    override def cmd =  s"aws logs get-log-events --log-group-name __group_name__ --log-stream-name __stream_name__"
   case class CodeBuildProjects() extends CodeBuild:
     override def cmd = s"aws codebuild list-projects"
 
@@ -110,6 +110,12 @@ object AppCmds:
         .map(CodeBuildStatus.apply)
     }
 
+  val codebuildLogs: Opts[CodeBuild] =
+    Opts.subcommand("logs", "Show logs for last build (AWS CodeBuild)") {
+      Opts.argument[String](metavar = "AWS CodeBuild project name")
+          .map(CodeBuildLogs.apply)
+    }
+
   val codebuildList: Opts[CodeBuild] =
     Opts.subcommand("projects", "List all projects (AWS CodeBuild)") {
       Opts(CodeBuildProjects())
@@ -124,6 +130,7 @@ object AppCmds:
         orElse codebuildStop
         orElse codebuildInfo
         orElse codebuildStatus
+        orElse codebuildLogs
         orElse codebuildList)
     }
 

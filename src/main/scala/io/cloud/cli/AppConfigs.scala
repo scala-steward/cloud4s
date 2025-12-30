@@ -2,7 +2,7 @@ package io.cloud.cli
 
 import cats.effect.{IO, Resource}
 
-import java.io.{File, FileInputStream}
+import java.io.File
 import scala.annotation.tailrec
 import scala.io.Source
 

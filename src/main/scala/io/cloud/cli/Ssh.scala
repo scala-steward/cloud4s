@@ -5,7 +5,6 @@ import com.jcraft.jsch.{Channel, ChannelExec, JSch, Session}
 
 import java.io.InputStream
 import scala.io.Source
-import AppConfigs.Config
 import io.cloud.cli.AppConfigs.Config
 
 object Ssh:
