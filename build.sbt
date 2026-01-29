@@ -5,7 +5,7 @@ import java.io.File
 import scala.language.postfixOps
 import scala.sys.process.*
 
-val scala3Version = "3.8.0-RC4"
+val scala3Version = "3.8.2-RC1"
 scalaVersion := scala3Version
 
 lazy val nativeCompile = inputKey[Unit]("Create native image")
