@@ -11,8 +11,7 @@ import com.indoorvivants.detective.Platform
 
 resolvers += Resolver.mavenLocal
 
-
-ThisBuild / scalaVersion := "3.8.4"
+ThisBuild / scalaVersion := "3.9.0"
 ThisBuild / scalafmtOnCompile := true
 ThisBuild / organization := "io.cloud4s.cli"
 ThisBuild / version := "0.0.5"
@@ -67,13 +66,13 @@ lazy val `cloud4s-native` = project
       "io.github.cquiroz" %%% "scala-java-time-tzdb" % Deps.javaTimeVersion,
       "com.github.scopt" %%% "scopt" % Deps.scoptVersion,
       "com.lihaoyi" %%% "upickle" % Deps.upickleVersion,
-      "com.softwaremill.sttp.client4" %%% "core" % Deps.sttpVersion,
+      "com.softwaremill.sttp.client4" %%% "core" % Deps.sttpVersion
     ),
 
-   
     // 2. Modos e caminhos de saída do Bindgen
     bindgenMode := BindgenMode.Manual(
-      scalaDir = (Compile / sourceDirectory).value / "scala" / "io" / "cloud4s" / "cli" / "bindings",
+      scalaDir =
+        (Compile / sourceDirectory).value / "scala" / "io" / "cloud4s" / "cli" / "bindings",
       cDir = (Compile / resourceDirectory).value / "scala-native" / "ssh"
     ),
 
@@ -95,7 +94,14 @@ lazy val `cloud4s-native` = project
       // Validação de plataforma para Apple Silicon (macOS arm64)
       conf
         .withLinkingOptions(
-          conf.linkingOptions ++ Seq("-fuse-ld=lld", "-lcurl", "-lssh", "-lssl", "-lcrypto", "-lstdc++")
+          conf.linkingOptions ++ Seq(
+            "-fuse-ld=lld",
+            "-lcurl",
+            "-lssh",
+            "-lssl",
+            "-lcrypto",
+            "-lstdc++"
+          )
         )
         .withLTO(LTO.none)
         .withMode(Mode.debug)
@@ -105,7 +111,7 @@ lazy val `cloud4s-native` = project
         .withOptimize(false)
     },
 
-    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v"),    
+    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v")
   )
 
 commands += Command.command("release") { state =>
@@ -139,5 +145,4 @@ commands += Command.command("release") { state =>
 
   println("Build de produção concluído com sucesso!")
   nextState
-}  
-
+}
