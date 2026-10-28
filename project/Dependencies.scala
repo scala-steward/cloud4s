@@ -3,5 +3,5 @@ object Deps {
   val upickleVersion = "4.4.3"
   val sttpVersion = "4.0.26"
   val munitVersion = "1.3.5"
-  val javaTimeVersion = "2.6.0"
+  val javaTimeVersion = "2.9.0"
 }
